@@ -11,6 +11,7 @@ app.engine("ejs", require("ejs").__express)
 app.set('view engine', 'ejs')
 app.set('views', 'views')
 
+//routes
 const shopRoutes = require('./routes/shop')
 const adminRoutes = require('./routes/admin')
 const bodyParser = require('body-parser')
