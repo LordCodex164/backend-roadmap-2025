@@ -1,0 +1,27 @@
+<%- include("includes/head.ejs") %>
+
+<body>
+
+    <%- include("includes/navigation.ejs") %>
+
+    <main>
+        
+        <% if (hasProducts) { %>
+          <ol>
+          <% for(let prod of products) { %>
+            <li>
+               <h2> <%= prod.title %> </h2> 
+            </li>
+
+          <% } %>
+          </ol>
+        <%} else { %>
+            <h2>No Products found</h2>
+        <% } %>            
+
+    </main>
+</body>
+
+
+
+</html>
