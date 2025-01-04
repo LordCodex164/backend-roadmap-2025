@@ -4,6 +4,8 @@ const hbs = require("express-handlebars")
 
 const errorController = require('./controllers/404')
 
+const db = require("./utils/db")
+
 const app = express()
 
 // app.engine('hbs', hbs({layoutDir: "views/layouts", extname: "hbs", defaultLayout: "main-layout"}))
@@ -26,4 +28,4 @@ app.use(errorController.get404)
 
 app.listen(3000, () => {
     console.log("Server is running on port 8000")
-})
+}) 

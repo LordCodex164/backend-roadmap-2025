@@ -9,8 +9,6 @@ const productController = require('../controllers/products')
 
 const products = [];
 
-console.log("root", rootDir)
-
 router.get('/add-product', productController.addProduct);
 
 router.post('/add-product', productController.postAddProduct);

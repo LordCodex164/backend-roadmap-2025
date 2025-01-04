@@ -1,8 +1,8 @@
-<%- include("includes/head.ejs") %>
+<%- include("../includes/head.ejs") %>
 
 <body>
 
-    <%- include("includes/navigation.ejs") %>
+    <%- include("../includes/navigation.ejs") %>
 
     <main>
         
@@ -13,6 +13,8 @@
                <h2> <%= prod.title %> </h2> 
             </li>
 
+            <p> Price: <%= prod.price %> </p>
+
           <% } %>
           </ol>
         <%} else { %>
@@ -21,7 +23,5 @@
 
     </main>
 </body>
-
-
 
 </html>
