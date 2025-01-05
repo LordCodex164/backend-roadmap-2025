@@ -1,4 +1,4 @@
-const mySql = require("mysql2")
+const {Sequelize} = require("sequelize")
 
 //here we set up the sql connection on our application and get back a connection 
 //object that allows us to run queries.
@@ -7,11 +7,9 @@ const mySql = require("mysql2")
 
 //so ideally, it is 
 
-const pool = mySql.createPool({
-    user: "root",
-    host: "localhost",
-    database: "backend-course",
-    password: "polish416#"
+const sequelize = new Sequelize("backend-course", "root", "polish416#", {
+    dialect: "mysql",
+    host: "localhost"
 })
 
-module.exports = pool.promise();
+module.exports = sequelize

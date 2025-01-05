@@ -15,11 +15,17 @@
 
             <p> Price: <%= prod.price %> </p>
 
+              <a href="/product/<%= prod.id %>">View Product </a>
+
           <% } %>
-          </ol>
+          </ol>  
+
         <%} else { %>
             <h2>No Products found</h2>
-        <% } %>            
+        <% } %>    
+        
+         <!-- View product by id from the database -->
+
 
     </main>
 </body>

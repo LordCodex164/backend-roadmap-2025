@@ -1,32 +1,28 @@
-const db = require("../utils/db")
+const {Sequelize, DataTypes} = require('sequelize');
 
-const getProductsFromFile = cb => {
-    db.execute("SELECT * FROM products")
-    .then(([rows, fieldData]) => {
-        cb(rows)
-    })
-    .catch(err => {
-        cb(err)
-    })
-}
+const sequelize = require("../utils/db")
 
-module.exports = class Product {
-    constructor(t, p, d, i) {
-        this.title = t
-        this.price = p,
-        this.description = d,
-        this.imageUrl = i
+const Product = sequelize.define("Product", {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+    },
+    title: Sequelize.STRING,
+    price: {
+        type: Sequelize.DOUBLE,
+        allowNull: false
+    },
+    imageUrl: {
+        type: Sequelize.STRING,
+        allowNull: false 
+    },
+    description: {
+        type: Sequelize.STRING,
+        allowNull: false  
     }
+}) 
 
-    save() {
-      return db.execute("INSERT INTO products (title, price, imageUrl, description) VALUES (?, ?, ?, ?)", 
-        [this.title, this.price, this.description, this.imageUrl]
-      )
-    }
-    
-    static fetchAll(cb) {
-        getProductsFromFile(products => {
-            cb(products)
-        })
-    }
-}
+
+module.exports = Product
