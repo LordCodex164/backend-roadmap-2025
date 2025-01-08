@@ -1,0 +1,40 @@
+<!-- Cart Page -->
+
+<%- include("../includes/head.ejs") %>
+
+<body>
+
+    <%- include("../includes/navigation.ejs") %>
+
+    <h1>Your Cart</h1>
+
+    <ul>
+
+        <% if (hasProducts) { %>
+
+        <% for (product of products) { %>
+        <li>
+            <h2><%= product.title %></h2>
+            <p>Quantity: <%= product.cartitem.quantity %></p>
+
+            <form action="/cart/delete-cart" method="POST">
+                <input type="hidden" name="productId" value="<%= product.id %>">
+                <button type="submit">Remove from Cart</button>
+            </form>
+        </li>
+        <form action="/create-order" method="POST">
+            <button type="submit">Order Now</button>
+        </form>
+    </ul>
+        <% } %>
+
+        <% } else { %>
+
+        <p>No products in your cart</p>
+
+        <% } %>
+    
+
+</body>
+
+</html>

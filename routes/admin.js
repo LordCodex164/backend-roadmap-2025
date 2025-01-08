@@ -13,5 +13,11 @@ router.get('/add-product', productController.addProduct);
 
 router.post('/add-product', productController.postAddProduct);
 
+router.get('/edit-product/:productId', productController.getEditProduct);
+
+router.post('/edit-product', productController.updateProduct);
+
+router.post("/delete-product", productController.deleteProduct)
+
 exports.routes = router;
 exports.products = products;
