@@ -12,13 +12,16 @@ const sequelize = require("./utils/db")
 const shopRoutes = require('./routes/shop')
 const adminRoutes = require('./routes/admin')
 const cartRoutes = require("./routes/cart")
+const orderRoutes = require("./routes/order")
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const Product = require("./models/product")
 const User = require("./models/user")
 const Cart = require("./models/cart")
 const CartItem = require("./models/cart-item")
-
+const Order = require("./models/order")
+const OrderItem = require("./models/order-item")
+const orderController = require("./controllers/order")
 // app.engine('hbs', hbs({layoutDir: "views/layouts", extname: "hbs", defaultLayout: "main-layout"}))
 
 app.engine("ejs", require("ejs").__express) 
@@ -36,6 +39,7 @@ app.use((req, res, next) => {
     User.findByPk(1)
     .then(user => {
         req.user = user;
+        orderController.getOrdersProducts(req)
         next()
     })
     .catch(err => {
@@ -46,6 +50,7 @@ app.use((req, res, next) => {
 app.use(shopRoutes)
 app.use("/admin", adminRoutes.routes)
 app.use("/cart", cartRoutes)
+app.use("/order", orderRoutes)
 app.use(errorController.get404)
 
 //one to one relationship
@@ -65,9 +70,18 @@ User.hasOne(Cart)
 Cart.belongsToMany(Product, {through: CartItem})
 Product.belongsToMany(Cart, {through: CartItem})
 
+//one to many relationship
+User.hasMany(Order)
+Order.belongsTo(User)
+
+
+Order.belongsToMany(Product, {through: OrderItem})
+Product.belongsToMany(Order, {through: OrderItem})
+
 
 //creating our dummy object 
-sequelize.sync()
+sequelize
+.sync()
 .then(result => {
  //console.log("res", result)
   return User.findByPk(1)

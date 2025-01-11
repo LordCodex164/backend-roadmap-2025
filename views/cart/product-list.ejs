@@ -22,11 +22,12 @@
                 <button type="submit">Remove from Cart</button>
             </form>
         </li>
-        <form action="/create-order" method="POST">
-            <button type="submit">Order Now</button>
-        </form>
     </ul>
         <% } %>
+
+        <form action="/order/checkout" method="POST">
+            <button type="submit">Checkout</button>
+        </form>
 
         <% } else { %>
 

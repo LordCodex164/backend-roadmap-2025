@@ -1,0 +1,33 @@
+<!-- Cart Page -->
+
+<%- include("../includes/head.ejs") %>
+
+<body>
+
+    <%- include("../includes/navigation.ejs") %>
+
+    <h1>Your Orders</h1>
+
+    <ul>
+
+        <% if (hasOrders) { %>
+
+        <% for (order of orders) { %>
+
+        <li>
+            <%= order.title %>
+        </li>
+        
+    </ul>
+        <% } %>
+
+        <% } else { %>
+
+        <p>No Orders</p>
+
+        <% } %>
+    
+
+</body>
+
+</html>
