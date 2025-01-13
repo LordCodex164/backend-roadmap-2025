@@ -1,4 +1,4 @@
-const Product = require("../models/product");
+const Product = require("../models/product").product;
 const db = require("../utils/db")
 
 
@@ -9,16 +9,13 @@ exports.addProduct = function(req, res) {
 exports.postAddProduct = function(req, res) {
     const {title, description, price, imageUrl} = req.body
 
-     const newProduct = new Product({
-        title,
-        price,
-        imageUrl,
-        description,
-    })
-    newProduct.save()
-    .then(result => {
+     const newProduct = new Product(title,price,imageUrl,description)
+
+     newProduct.save()
+     .then(result => {
+        console.log("r", result)
         res.redirect("/")
-    })
+     })
     .catch(err => {
         console.log("e", err)
     })

@@ -4,7 +4,7 @@ const ServerApiVersion = mongoDb.ServerApiVersion
 
 let _db 
 
-const url = "mongodb+srv://dan:polish416@cluster0.eyfmqdj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const url = process.env.MONGO_URL
 
 const client = new MongoClient(url, {
     serverApi: {
