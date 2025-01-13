@@ -4,6 +4,8 @@ const hbs = require("express-handlebars")
 
 const errorController = require('./controllers/404')
 
+require("dotenv").config()
+
 const app = express()
 
 //routes
