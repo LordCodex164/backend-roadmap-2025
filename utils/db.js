@@ -1,15 +1,37 @@
-const {Sequelize} = require("sequelize")
+const mongoDb = require("mongodb")
+const MongoClient = mongoDb.MongoClient
+const ServerApiVersion = mongoDb.ServerApiVersion
 
-//here we set up the sql connection on our application and get back a connection 
-//object that allows us to run queries.
+let _db 
 
-//connections are to be closed after a query.
+const url = "mongodb+srv://dan:polish416@cluster0.eyfmqdj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
-//so ideally, it is 
+const client = new MongoClient(url, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    }
+  });
 
-const sequelize = new Sequelize("backend-course", "root", "polish416#", {
-    dialect: "mysql",
-    host: "localhost"
-})
+const mongoConnect = callBack => {
+    client.connect(url)
+    .then(client => {
+        console.log("connected")
+        _db = client.db("shop")
+        callBack(client)
+    })
+    .catch(err => {
+        callBack(err)
+    })
+}
 
-module.exports = sequelize
+const getDb = () => {
+   if(_db) {
+    return _db
+   }
+   throw "No Database found"
+}
+
+exports.mongoConnect = mongoConnect
+exports.getDb = getDb

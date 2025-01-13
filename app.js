@@ -6,22 +6,15 @@ const errorController = require('./controllers/404')
 
 const app = express()
 
-const sequelize = require("./utils/db")
-
 //routes
-const shopRoutes = require('./routes/shop')
-const adminRoutes = require('./routes/admin')
-const cartRoutes = require("./routes/cart")
-const orderRoutes = require("./routes/order")
+// const shopRoutes = require('./routes/shop')
+// const adminRoutes = require('./routes/admin')
+// const cartRoutes = require("./routes/cart")
+// const orderRoutes = require("./routes/order")
 const bodyParser = require('body-parser')
-const methodOverride = require('method-override')
-const Product = require("./models/product")
-const User = require("./models/user")
-const Cart = require("./models/cart")
-const CartItem = require("./models/cart-item")
-const Order = require("./models/order")
-const OrderItem = require("./models/order-item")
-const orderController = require("./controllers/order")
+const methodOverride = require('method-override') 
+const {mongoConnect, getDb} = require("./utils/db")
+
 // app.engine('hbs', hbs({layoutDir: "views/layouts", extname: "hbs", defaultLayout: "main-layout"}))
 
 app.engine("ejs", require("ejs").__express) 
@@ -36,70 +29,18 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 //for every incoming request
 app.use((req, res, next) => {
-    User.findByPk(1)
-    .then(user => {
-        req.user = user;
-        orderController.getOrdersProducts(req)
-        next()
-    })
-    .catch(err => {
-        console.log(err)
-    })
+   console.log("This will always run!")
 })
 
-app.use(shopRoutes)
-app.use("/admin", adminRoutes.routes)
-app.use("/cart", cartRoutes)
-app.use("/order", orderRoutes)
-app.use(errorController.get404)
-
-//one to one relationship
-Product.belongsTo(User, {constraints: true, onDelete: "CASCADE"})
-
-//one to many relationship
-User.hasMany(Product)
-
-//one to one relationship
-
-//we have this 
-
-User.hasOne(Cart)
-
-//many to many relationship
-
-Cart.belongsToMany(Product, {through: CartItem})
-Product.belongsToMany(Cart, {through: CartItem})
-
-//one to many relationship
-User.hasMany(Order)
-Order.belongsTo(User)
+// app.use(shopRoutes)
+// app.use("/admin", adminRoutes.routes)
+// app.use("/cart", cartRoutes)
+// app.use("/order", orderRoutes)
+// app.use(errorController.get404)
 
 
-Order.belongsToMany(Product, {through: OrderItem})
-Product.belongsToMany(Order, {through: OrderItem})
-
-
-//creating our dummy object 
-sequelize
-.sync()
-.then(result => {
- //console.log("res", result)
-  return User.findByPk(1)
-  .then(user => {
-    if(!user){
-       return User.create({name: "test", email: "test@gmail.com"})
-    }
-    return Promise.resolve(user)
-  })
-  .then(user => {
-    return user.createCart()
-  })
-  .then(cart => {
+mongoConnect(client => {
     app.listen(3000, () => {
-        console.log("Server is running on port 8000")
-    }) 
-}) 
-})
-.catch(err => {
-    console.log("err", err)
+        console.log("listening on Port 3000")
+    })
 })
