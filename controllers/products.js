@@ -9,11 +9,10 @@ exports.addProduct = function(req, res) {
 exports.postAddProduct = function(req, res) {
     const {title, description, price, imageUrl} = req.body
 
-     const newProduct = new Product(title,price,imageUrl,description)
+    const newProduct = new Product(title,price,imageUrl,description, null, req.user._id.toString())
 
      newProduct.save()
      .then(result => {
-        console.log("r", result)
         res.redirect("/")
      })
     .catch(err => {
@@ -23,7 +22,7 @@ exports.postAddProduct = function(req, res) {
 
 exports.getProducts = function(req, res) {
 
-       req.user.getProducts()
+       Product.fetchAll()
        .then(products => {
           res.render('shop/product-list', { products, pageTitle: 'Shop', hasProducts: products.length > 0 })
        })
@@ -36,9 +35,12 @@ exports.getProduct = function(req, res) {
 
     const id = req.params.productId
 
-    req.user.getProducts({where: {id}})
-    .then(products => {
-        const product = products[0]
+    Product.findById(id)
+    .then(product => {
+        product = {
+            ...product,
+            _id: product._id.toString() 
+        }
         res.render('shop/product-detail', { product, pageTitle: product.title })
     })
     .catch(err => {  
@@ -55,10 +57,9 @@ exports.getEditProduct = function(req, res) {
     }
 
     const id = req.params.productId
-    req.user.getProducts({where: {id}})
-    .then(products => {
-        const product = products[0]
-        res.render('admin/edit-product', { product, pageTitle: 'Edit Product' })
+    Product.findById(id)
+    .then(product => {
+        res.render('admin/edit-product', { product, pageTitle: 'Edit Product', productId: product._id.toString() })
     })
     .catch(err => {
         console.log(err)
@@ -69,15 +70,7 @@ exports.updateProduct = function(req, res) {
 
     const {productId, title, description, price, imageUrl} = req.body
 
-    req.user.getProducts({where: {id: productId}})
-    .then(products => {
-        const product = products[0]
-        product.title = title
-        product.description = description
-        product.price = price
-        product.imageUrl = imageUrl
-        return product.save()
-    })
+    Product.update(productId, {title, description, price, imageUrl})
     .then(result => {
         console.log("updated product")
         res.redirect("/")
@@ -89,16 +82,9 @@ exports.updateProduct = function(req, res) {
 
 exports.deleteProduct = function(req, res) {
     const prodId = req.body.productId
- 
-    req.user.getProducts({where: {id: prodId}})
-    .then(products => {
-        if(products.length < 1){
-            throw new Error("No Products Found")
-        }
-       return products[0].destroy()
-     })
+    Product.delete(prodId)
      .then(result => {
-        console.log("result destroyed")
+        console.log("result deleted")
         res.redirect("/")
      })
      .catch(err => {

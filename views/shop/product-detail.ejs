@@ -12,12 +12,17 @@
         <p><%= product.price %></p>
         <!-- <img src="<%= product.imageUrl %>" alt="<%= product.title %>"> -->
         <form action="/cart/add-to-cart" method="POST">
-            <input type="hidden" name="productId" value="<%= product.id %>">
+            <input type="hidden" name="productId" value="<%= product._id %>">
             <button type="submit">Add to Cart</button>
         </form>
-        <a href="/admin/edit-product/<%= product.id %>/?isEdit=true">
+        <a href="/admin/edit-product/<%= product._id %>/?isEdit=true">
             edit
         </a>
+        <!-- Delete -->
+        <form action="/admin/delete-product" method="POST">
+            <input type="hidden" name="productId" value="<%= product._id %>">
+            <button type="submit">Delete Product</button>
+        </form>
     </main>
 
 </body>
