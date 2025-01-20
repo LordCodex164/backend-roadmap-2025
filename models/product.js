@@ -72,7 +72,7 @@ class Product {
          productid: prodId,
          quantity: newQuantity
       })
-     }
+     }  
 
       const updatedCart = {
         items: updatedUserCarts,

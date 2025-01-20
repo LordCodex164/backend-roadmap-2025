@@ -12,7 +12,7 @@ const app = express()
 const shopRoutes = require('./routes/shop')
 const adminRoutes = require('./routes/admin')
 const cartRoutes = require("./routes/cart")
-// const orderRoutes = require("./routes/order")
+const orderRoutes = require("./routes/order")
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override') 
 const {mongoConnect, getDb} = require("./utils/db")
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
    console.log("This will always run!")
    User.findById("6789dc3674032d9a39b0a1fc")
    .then(user => {
-    req.user = user
+    req.user = new User(user.email, user.username, user._id, user.cart)
     next()
    })
    .catch(err => {
@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 app.use(shopRoutes)
 app.use("/admin", adminRoutes.routes)
 app.use("/cart", cartRoutes)
-// app.use("/order", orderRoutes)
+app.use("/order", orderRoutes)
 // app.use(errorController.get404)
 
 

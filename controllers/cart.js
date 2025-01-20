@@ -9,17 +9,7 @@ exports.postCart = function(req, res) {
 
   const productId = req.body.productId
 
-   const newProduct = new Product(
-     null,
-     null,
-     null,
-     null,
-     null,
-     req.user._id,
-     req.user.cart
-   )
-
-  newProduct.addToCart(productId)
+  req.user.addToCart(productId)
   .then(result => {
      res.redirect("/")
   })
@@ -41,51 +31,27 @@ exports.getCart = function(req, res) {
 
 exports.getCartProducts = function(req, res) {
 
-    const {items: products} = req.user.cart
+  req.user.getAllCart()
+  .then(prods => {
+     res.render("cart/product-list", {products: prods ? prods: [], pageTitle: 'Cart Products', hasProducts: prods?.length > 0})
+  })
+  .catch(err => {
+    console.log(err)
+  })
 
-    console.log("p", products)
-
-    const mappedPromise = products.map((item) => {
-      return Product.findById(item.productid)
-      .then(products => {
-         return {...products, quantity: item.quantity}
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    })
-    return Promise.all(mappedPromise)
-    .then(prods => {
-      console.log("P", prods)
-      res.render("cart/product-list", {products: prods, pageTitle: 'Cart Products', hasProducts: prods.length > 0})
-    })
-    .catch(err => {
-      console.log(err)
-    })
-    
 }
 
 exports.deleteCartProduct = function (req, res) {
+
   const id = req.body.productId
-  req.user.getCart()
-  .then(cart => {
-    if(!cart){
-      throw new Error("cart not found")
-    }
-    return cart.getProducts({where: {id}})
-    .then(products => {
-      let prod
 
-      if(products.length > 0){
-        prod = products[0]
-      }
+  console.log("id", id)
 
-       return prod.cartitem.destroy()
-    })
+  req.user.deleteCart(id)
     .then(result => {
+      console.log("r", result)
       res.redirect("/")
     })
-  })
   .catch(err => {
     console.log("err", err)
   })
