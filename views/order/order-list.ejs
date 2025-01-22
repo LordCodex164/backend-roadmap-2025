@@ -14,13 +14,18 @@
 
         <% for (order of orders) { %>
 
+        <% for (product of order.items) { %>
+
         <li>
-            <%= order.title %>
-            <%= order.quantity %> 
-            <%= order.price %>
-            <%= order.imageUrl %>  
-            <%= order.description %>
+            <h2><%= product.productId.title %></h2>
+            <p>Quantity: <%= product.quantity %></p>
         </li>
+
+        <br/>
+        
+        <% } %>
+
+        <%= order.status  %>
         
     </ul>
         <% } %>

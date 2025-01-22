@@ -1,11 +1,17 @@
-
+const Order = require("../models/order")
 
 exports.checkoutOrder = function (req, res, next) {
     /*get the products that we are sending from the cart */
 
     //mongodb way 
 
-    req.user.addOrder()
+    const userId = req.user._id
+
+    const items = req.user.cart.items
+
+    const newOrder = new Order()
+
+    newOrder.addOrder(userId, items)
     .then(order => {
         console.log("o", order)
        res.redirect("/")
@@ -13,7 +19,7 @@ exports.checkoutOrder = function (req, res, next) {
     .catch(err => {
         console.log(err)
     })
-
+    
     //sequelize way of doing things
     // let product
     // let fetchedOrders;
@@ -58,9 +64,14 @@ exports.checkoutOrder = function (req, res, next) {
 
 //we can do this way with lazy loading
 exports.getOrders = function (req, res, next) {
-    let products = []
-    req.user
-    .getOrders()
+
+   let userId = req.user._id
+
+     Order
+    .find({userId})
+    .populate("items.productId")
+    .select("-_id")
+    // .execPopulate()
     .then(orders => {
         console.log("orders", orders)
        return res.render("order/order-list", {orders, pageTitle: 'Orders', hasOrders: orders?.length > 0})

@@ -33,15 +33,14 @@ app.use(bodyParser.urlencoded({ extended: false }))
 //for every incoming request
 app.use((req, res, next) => {
    console.log("This will always run!")
-   User.findById("6789dc3674032d9a39b0a1fc")
+   User.findById("678fd1f8b9b4841380f7ef06")
    .then(user => {
-    req.user = new User(user.email, user.username, user._id, user.cart)
+    req.user = user
     next()
    })
    .catch(err => {
     console.log(err)
    })
-   
 })
 
 app.use(shopRoutes)
@@ -52,6 +51,7 @@ app.use("/order", orderRoutes)
 
 
 mongoConnect(client => {
+    //console.log(client)
     app.listen(3000, () => {
         console.log("listening on Port 3000")
     })

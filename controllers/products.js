@@ -1,5 +1,4 @@
-const Product = require("../models/product").product;
-const db = require("../utils/db")
+const Product = require("../models/product");
 
 
 exports.addProduct = function(req, res) {
@@ -7,9 +6,10 @@ exports.addProduct = function(req, res) {
 }
 
 exports.postAddProduct = function(req, res) {
+
     const {title, description, price, imageUrl} = req.body
 
-    const newProduct = new Product(title,price,imageUrl,description, null, req.user._id.toString())
+    const newProduct = new Product({title,price,imageUrl,description, userId: req.user})
 
      newProduct.save()
      .then(result => {
@@ -22,7 +22,9 @@ exports.postAddProduct = function(req, res) {
 
 exports.getProducts = function(req, res) {
 
-       Product.fetchAll()
+       Product.find()
+    //    .select("price imageUrl -_id")
+    //    .populate("userId", "name email -_id", )
        .then(products => {
           res.render('shop/product-list', { products, pageTitle: 'Shop', hasProducts: products.length > 0 })
        })
@@ -32,15 +34,11 @@ exports.getProducts = function(req, res) {
 }
 
 exports.getProduct = function(req, res) {
-
+ 
     const id = req.params.productId
 
     Product.findById(id)
     .then(product => {
-        product = {
-            ...product,
-            _id: product._id.toString() 
-        }
         res.render('shop/product-detail', { product, pageTitle: product.title })
     })
     .catch(err => {  
@@ -63,18 +61,18 @@ exports.getEditProduct = function(req, res) {
     })
     .catch(err => {
         console.log(err)
-    })
-}
+    })  
+} 
 
 exports.updateProduct = function(req, res) {
 
     const {productId, title, description, price, imageUrl} = req.body
 
-    Product.update(productId, {title, description, price, imageUrl})
+    Product.findByIdAndUpdate(productId, {title, description, price, imageUrl})
     .then(result => {
         console.log("updated product")
         res.redirect("/")
-    })
+    }) 
     .catch(err => {
         console.log(err)
     })
@@ -82,7 +80,7 @@ exports.updateProduct = function(req, res) {
 
 exports.deleteProduct = function(req, res) {
     const prodId = req.body.productId
-    Product.delete(prodId)
+    Product.findByIdAndDelete(prodId)
      .then(result => {
         console.log("result deleted")
         res.redirect("/")

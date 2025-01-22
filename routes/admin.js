@@ -7,7 +7,6 @@ const path = require('path');
 
 const productController = require('../controllers/products')
 
-const products = [];
 
 router.get('/add-product', productController.addProduct);
 
@@ -20,4 +19,3 @@ router.post('/edit-product', productController.updateProduct);
 router.post("/delete-product", productController.deleteProduct)
 
 exports.routes = router;
-exports.products = products;

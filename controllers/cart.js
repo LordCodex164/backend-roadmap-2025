@@ -38,7 +38,6 @@ exports.getCartProducts = function(req, res) {
   .catch(err => {
     console.log(err)
   })
-
 }
 
 exports.deleteCartProduct = function (req, res) {

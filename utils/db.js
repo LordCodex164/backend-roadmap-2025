@@ -1,24 +1,35 @@
-const mongoDb = require("mongodb")
-const MongoClient = mongoDb.MongoClient
-const ServerApiVersion = mongoDb.ServerApiVersion
+// const mongoDb = require("mongodb")
+// const MongoClient = mongoDb.MongoClient
+// const ServerApiVersion = mongoDb.ServerApiVersion
+const mongoose = require("mongoose")
 
-let _db 
+const User = require("../models/user")
+
+// let _db 
 
 const url = process.env.MONGO_URL
 
-const client = new MongoClient(url, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    }
-  });
+// const client = new MongoClient(url, {
+//     serverApi: {
+//       version: ServerApiVersion.v1,
+//       strict: true,
+//       deprecationErrors: true,
+//     }
+//   });
 
 const mongoConnect = callBack => {
-    client.connect(url)
+    mongoose.connect(url)
     .then(client => {
-        console.log("connected")
-        _db = client.db("shop")
+        User.findOne().then(user => {
+            if(!user){
+                User.create({
+                    name: "test",
+                    email: "test@gmail.com",
+                    cart: []
+                })
+            }
+        })
+        console.log("connected")        
         callBack(client)
     })
     .catch(err => {
@@ -26,12 +37,12 @@ const mongoConnect = callBack => {
     })
 }
 
-const getDb = () => {
-   if(_db) {
-    return _db
-   }
-   throw "No Database found"
-}
+// const getDb = () => {
+//    if(_db) {
+//     return _db
+//    }
+//    throw "No Database found"
+// }
 
 exports.mongoConnect = mongoConnect
-exports.getDb = getDb
+// exports.getDb = getDb
