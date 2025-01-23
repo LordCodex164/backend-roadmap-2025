@@ -19,6 +19,7 @@ const methodOverride = require('method-override')
 const {mongoConnect, getDb} = require("./utils/db")
 const User = require("./models/user")
 const session = require("express-session")
+const MongoDbStore = require("connect-mongodb-session")(session)
 
 // app.engine('hbs', hbs({layoutDir: "views/layouts", extname: "hbs", defaultLayout: "main-layout"}))
 
@@ -30,8 +31,21 @@ app.set('views', 'views')
 app.use(methodOverride('_method'));
 
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(session({secret: "my secret key", resave: false, saveUninitialized: false}))
 
+const store = new MongoDbStore({
+    uri: process.env.MONGO_URL,
+    collection: "sessions",
+})
+
+//setting up out store where we store our session
+app.use(
+    session({
+     secret: "my secret key", 
+     resave: false, 
+     saveUninitialized: false, 
+     store
+    })
+)
 
 //for every incoming request
 app.use((req, res, next) => {

@@ -1,6 +1,7 @@
 
 
 exports.login = function (req, res) {
+    console.log(req.session.isLogged)
     res.render("auth/login", {pageTitle: "Login Page"})
 }
 
