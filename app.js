@@ -13,10 +13,12 @@ const shopRoutes = require('./routes/shop')
 const adminRoutes = require('./routes/admin')
 const cartRoutes = require("./routes/cart")
 const orderRoutes = require("./routes/order")
+const authRoutes = require("./routes/auth")
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override') 
 const {mongoConnect, getDb} = require("./utils/db")
 const User = require("./models/user")
+const session = require("express-session")
 
 // app.engine('hbs', hbs({layoutDir: "views/layouts", extname: "hbs", defaultLayout: "main-layout"}))
 
@@ -28,6 +30,7 @@ app.set('views', 'views')
 app.use(methodOverride('_method'));
 
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(session({secret: "my secret key", resave: false, saveUninitialized: false}))
 
 
 //for every incoming request
@@ -47,8 +50,8 @@ app.use(shopRoutes)
 app.use("/admin", adminRoutes.routes)
 app.use("/cart", cartRoutes)
 app.use("/order", orderRoutes)
+app.use("/auth", authRoutes)
 // app.use(errorController.get404)
-
 
 mongoConnect(client => {
     //console.log(client)
