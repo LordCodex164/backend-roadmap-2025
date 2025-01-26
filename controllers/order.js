@@ -5,15 +5,16 @@ exports.checkoutOrder = function (req, res, next) {
 
     //mongodb way 
 
-    const userId = req.user._id
+    console.log(req.session)
 
-    const items = req.user.cart.items
+    const userId = req.session.user._id
+
+    const items = req.session.user.cart.items
 
     const newOrder = new Order()
 
     newOrder.addOrder(userId, items)
     .then(order => {
-        console.log("o", order)
        res.redirect("/")
     })
     .catch(err => {
@@ -65,7 +66,9 @@ exports.checkoutOrder = function (req, res, next) {
 //we can do this way with lazy loading
 exports.getOrders = function (req, res, next) {
 
-   let userId = req.user._id
+   let userId = req.user._id;
+
+   const isLoggedIn = req.session.isLogged;
 
      Order
     .find({userId})
@@ -73,8 +76,7 @@ exports.getOrders = function (req, res, next) {
     .select("-_id")
     // .execPopulate()
     .then(orders => {
-        console.log("orders", orders)
-       return res.render("order/order-list", {orders, pageTitle: 'Orders', hasOrders: orders?.length > 0})
+       return res.render("order/order-list", {orders, pageTitle: 'Orders', hasOrders: orders?.length > 0, isAuthenticated: isLoggedIn})
     })
     .catch(err => {
         console.log(err)
@@ -106,7 +108,7 @@ exports.getOrders = function (req, res, next) {
 //or this way with eager loading where we include model related to another
 
 exports.getOrdersProducts = function (req) {
-    req.user
+    req.session.user
     .getOrders({include: ["Products"]})
     .then(orders => {
         console.log("o", orders)

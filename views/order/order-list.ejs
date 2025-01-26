@@ -17,15 +17,15 @@
         <% for (product of order.items) { %>
 
         <li>
-            <h2><%= product.productId.title %></h2>
-            <p>Quantity: <%= product.quantity %></p>
+            <h2><%= product?.productId?.title %></h2>
+            <p>Quantity: <%= product?.quantity %></p>
         </li>
 
         <br/>
         
         <% } %>
 
-        <%= order.status  %>
+        <%= order?.status  %>
         
     </ul>
         <% } %>

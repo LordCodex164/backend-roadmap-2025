@@ -2,10 +2,20 @@
         <nav>
             <ul>
                 <li><a href="/">Shop</a></li>
+                <% if( isAuthenticated )  { %>
                 <li><a href="/admin/add-product">Add Product</a></li>
                 <li><a href="/cart">Cart</a></li>
                 <li><a href="/order">Orders</a></li>
+                <% } %>
+                <% if( isAuthenticated )  { %>
+                    <form action="/auth/logout" method="post">
+                      <button type="submit">
+                         Logout
+                      </button>
+                    </form>
+                <% } else {%>
                 <li><a href="/auth/login">Login</a></li>
+                <% } %>
             </ul>
         </nav>
     </header>

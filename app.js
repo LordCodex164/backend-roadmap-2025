@@ -37,7 +37,7 @@ const store = new MongoDbStore({
     collection: "sessions",
 })
 
-//setting up out store where we store our session
+//configuring our store where we store our session
 app.use(
     session({
      secret: "my secret key", 
@@ -50,10 +50,13 @@ app.use(
 //for every incoming request
 app.use((req, res, next) => {
    console.log("This will always run!")
-   User.findById("678fd1f8b9b4841380f7ef06")
+   if(!req.session.user){
+     return next()
+   }
+   User.findById(req.session.user._id)
    .then(user => {
-    req.user = user
-    next()
+     req.user = user
+     next()
    })
    .catch(err => {
     console.log(err)

@@ -2,7 +2,10 @@ const Product = require("../models/product");
 
 
 exports.addProduct = function(req, res) {
-    res.render('admin/add-product', {pageTitle: 'Add Product'});
+
+    const isLoggedIn = req.session.isLogged;
+
+    res.render('admin/add-product', {pageTitle: 'Add Product', isAuthenticated: isLoggedIn});
 }
 
 exports.postAddProduct = function(req, res) {
@@ -22,11 +25,13 @@ exports.postAddProduct = function(req, res) {
 
 exports.getProducts = function(req, res) {
 
+    const isLoggedIn = req.session.isLogged;
+
        Product.find()
     //    .select("price imageUrl -_id")
     //    .populate("userId", "name email -_id", )
        .then(products => {
-          res.render('shop/product-list', { products, pageTitle: 'Shop', hasProducts: products.length > 0 })
+          res.render('shop/product-list', { products, pageTitle: 'Shop', hasProducts: products.length > 0, isAuthenticated: isLoggedIn })
        })
        .catch(err => {
          console.log(err)
@@ -37,9 +42,11 @@ exports.getProduct = function(req, res) {
  
     const id = req.params.productId
 
+    const isLoggedIn = req.session.isLogged;
+
     Product.findById(id)
     .then(product => {
-        res.render('shop/product-detail', { product, pageTitle: product.title })
+        res.render('shop/product-detail', { product, pageTitle: product.title, isAuthenticated: isLoggedIn })
     })
     .catch(err => {  
         console.log(err)
@@ -50,6 +57,8 @@ exports.getEditProduct = function(req, res) {
 
     const isEdit = req.query.isEdit
 
+    const isLoggedIn = req.session.isLogged;
+
     if(!isEdit) {
         return res.redirect("/")
     }
@@ -57,7 +66,7 @@ exports.getEditProduct = function(req, res) {
     const id = req.params.productId
     Product.findById(id)
     .then(product => {
-        res.render('admin/edit-product', { product, pageTitle: 'Edit Product', productId: product._id.toString() })
+        res.render('admin/edit-product', { product, pageTitle: 'Edit Product', productId: product._id.toString(), isAuthenticated: isLoggedIn })
     })
     .catch(err => {
         console.log(err)

@@ -9,6 +9,6 @@ router.get('/cart', cartController.getCart)
 
 router.post("/add-to-cart", cartController.postCart)
 
-// router.post("/delete-cart", cartController.deleteCartProduct)
+router.post("/delete-cart", cartController.deleteCartProduct)
 
 module.exports = router

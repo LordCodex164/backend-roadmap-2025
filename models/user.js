@@ -228,7 +228,7 @@ const mongoose = require("mongoose")
 const Product = require("../models/product")
 
 const UserSchema = new mongoose.Schema({
-   name: {
+   password: {
     type: String,
     required: true
    },
@@ -255,6 +255,8 @@ const UserSchema = new mongoose.Schema({
 })
 
    UserSchema.methods.addToCart = function (prodId) {
+
+    console.log(prodId, "product")
 
     //find index of the item in the cart
 
@@ -326,7 +328,7 @@ const UserSchema = new mongoose.Schema({
                  status: "pending"
               }
 
-              console.log("up", updatedProducts)
+              console.log("up", updatedProducts) 
 
              this.cart = updatedProducts
              this.save()

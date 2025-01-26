@@ -2,38 +2,42 @@ const Product = require("../models/product").product;
 const db = require("../utils/db")
 
 exports.addCart = function(req, res) {
-    res.render('admin/add-product', {pageTitle: 'Add Product'});
+    res.render('admin/add-product', {pageTitle: 'Add Product', isAuthenticated: isLoggedIn});
 }
 
 exports.postCart = function(req, res) {
 
   const productId = req.body.productId
 
-  req.user.addToCart(productId)
-  .then(result => {
-     res.redirect("/")
-  })
-  .catch(err => {
-    console.log(err)
-  })
-}
+    req.user.addToCart(productId)
+    .then(result => {
+      res.redirect("/")
+    })
+    .catch(err => {
+      console.log(err)
+    })
+} 
 
 exports.getCart = function(req, res) {
-       req.user.getCart()
+
+      const isLoggedIn = req.session.isLogged;
+
+       req.user?.getCart()
        .then(products => {
-          res.render('cart', { products, pageTitle: 'Shop', hasProducts: products.length > 0 })
+          res.render('cart', { products, pageTitle: 'Shop', hasProducts: products.length > 0, isAuthenticated: isLoggedIn })
        })
        .catch(err => {
          console.log(err)
        })
 }
 
-
 exports.getCartProducts = function(req, res) {
 
-  req.user.getAllCart()
+  const isLoggedIn = req.session.isLogged;
+
+  req.user?.getAllCart()
   .then(prods => {
-     res.render("cart/product-list", {products: prods ? prods: [], pageTitle: 'Cart Products', hasProducts: prods?.length > 0})
+     res.render("cart/product-list", {products: prods ? prods: [], pageTitle: 'Cart Products', hasProducts: prods?.length > 0, isAuthenticated: isLoggedIn})
   })
   .catch(err => {
     console.log(err)
@@ -41,6 +45,7 @@ exports.getCartProducts = function(req, res) {
 }
 
 exports.deleteCartProduct = function (req, res) {
+
 
   const id = req.body.productId
 
