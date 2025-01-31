@@ -6,6 +6,9 @@
 
     <main>
         
+      <% if (errorMessage) { %>
+        <p><%= errorMessage %></p>
+      <% } %>
         <% if (hasProducts) { %>
           <ol>
           <% for(let prod of products) { %>

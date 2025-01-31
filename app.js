@@ -20,6 +20,8 @@ const {mongoConnect, getDb} = require("./utils/db")
 const User = require("./models/user")
 const session = require("express-session")
 const MongoDbStore = require("connect-mongodb-session")(session)
+const csrf = require("csurf")
+const flash = require("connect-flash")
 
 // app.engine('hbs', hbs({layoutDir: "views/layouts", extname: "hbs", defaultLayout: "main-layout"}))
 
@@ -37,6 +39,7 @@ const store = new MongoDbStore({
     collection: "sessions",
 })
 
+
 //configuring our store where we store our session
 app.use(
     session({
@@ -46,6 +49,12 @@ app.use(
      store
     })
 )
+
+const csrfProtection = csrf()
+
+app.use(csrfProtection)
+
+app.use(flash())
 
 //for every incoming request
 app.use((req, res, next) => {
@@ -62,6 +71,24 @@ app.use((req, res, next) => {
     console.log(err)
    })
 })
+
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn
+    // const token = req.csrfToken()
+    // res.locals.csrfToken = token
+    // req.session.csrftoken = token
+    // console.log("cr", req.session.csrfToken)
+    // //res.locals.csrfToken = req.csrfToken()
+    next() 
+})
+
+app.use((err, req, res, next) => {
+    if (err.code === 'EBADCSRFTOKEN') {
+        return res.status(403).send('Invalid CSRF token.');
+    }
+    next(err);
+});
+
 
 app.use(shopRoutes)
 app.use("/admin", adminRoutes.routes)

@@ -9,6 +9,7 @@ exports.postCart = function(req, res) {
 
   const productId = req.body.productId
 
+  if(req.csrfToken === req.session.csrfToken){
     req.user.addToCart(productId)
     .then(result => {
       res.redirect("/")
@@ -16,6 +17,12 @@ exports.postCart = function(req, res) {
     .catch(err => {
       console.log(err)
     })
+  }
+  else {
+    req.flash("error", "Invalid csrf token")
+    res.redirect("/")
+  }
+
 } 
 
 exports.getCart = function(req, res) {
@@ -51,6 +58,7 @@ exports.deleteCartProduct = function (req, res) {
 
   console.log("id", id)
 
+
   req.user.deleteCart(id)
     .then(result => {
       console.log("r", result)
@@ -59,4 +67,5 @@ exports.deleteCartProduct = function (req, res) {
   .catch(err => {
     console.log("err", err)
   })
+
 }

@@ -230,7 +230,6 @@ const Product = require("../models/product")
 const UserSchema = new mongoose.Schema({
    password: {
     type: String,
-    required: true
    },
    email:{
     type: String,
@@ -288,8 +287,6 @@ const UserSchema = new mongoose.Schema({
        items: updatedUserCarts,
        status: "active"
      }
-
-     console.log(updatedCart, "cart")
  
      if(updatedCart){
        //update user cart
@@ -327,8 +324,6 @@ const UserSchema = new mongoose.Schema({
                  items: fetchedProducts,
                  status: "pending"
               }
-
-              console.log("up", updatedProducts) 
 
              this.cart = updatedProducts
              this.save()

@@ -15,20 +15,11 @@ const url = process.env.MONGO_URL
 //       strict: true,
 //       deprecationErrors: true,
 //     }
-//   });
+//   }); 
 
 const mongoConnect = callBack => {
     mongoose.connect(url)
     .then(client => {
-        User.findOne().then(user => {
-            if(!user){
-                User.create({
-                    name: "test",
-                    email: "test@gmail.com",
-                    cart: []
-                })
-            }
-        })
         console.log("connected")        
         callBack(client)
     })
