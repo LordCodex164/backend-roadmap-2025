@@ -22,6 +22,7 @@ const session = require("express-session")
 const MongoDbStore = require("connect-mongodb-session")(session)
 const csrf = require("csurf")
 const flash = require("connect-flash")
+const createCrsfToken = require('./middleware/crsfToken');
 
 // app.engine('hbs', hbs({layoutDir: "views/layouts", extname: "hbs", defaultLayout: "main-layout"}))
 
@@ -73,12 +74,7 @@ app.use((req, res, next) => {
 })
 
 app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn
-    // const token = req.csrfToken()
-    // res.locals.csrfToken = token
-    // req.session.csrftoken = token
-    // console.log("cr", req.session.csrfToken)
-    // //res.locals.csrfToken = req.csrfToken()
+    //res.locals.isAuthenticated = req.session.isLoggedIn
     next() 
 })
 
@@ -90,7 +86,7 @@ app.use((err, req, res, next) => {
 });
 
 
-app.use(shopRoutes)
+app.use("/", shopRoutes)
 app.use("/admin", adminRoutes.routes)
 app.use("/cart", cartRoutes)
 app.use("/order", orderRoutes)

@@ -9,12 +9,15 @@
     <% if (errorMessage) { %>
     <p><%= errorMessage %></p>
     <% } %>
+
     <form action="/auth/login" method="POST">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" required>
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <button type="submit">Login</button>
+        <a href="/auth/resetEmail">Reset Email</a>
     </form>
 
 </body>

@@ -1,13 +1,7 @@
 const express = require('express');
-
 const router = express.Router();
-
-const rootDir = require('../utils/path');
-const path = require('path');
-
 const productController = require('../controllers/products');
 const createCrsfToken = require('../middleware/crsfToken');
-
 
 router.get('/add-product', createCrsfToken, productController.addProduct);
 

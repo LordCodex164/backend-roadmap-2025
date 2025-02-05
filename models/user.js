@@ -235,6 +235,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
    },
+   resetToken: String,
+   resetTokenExpiration: Date,
    cart:{
     items: [
       {
@@ -250,6 +252,10 @@ const UserSchema = new mongoose.Schema({
       }
     ],
     status: String
+   },
+   is_active:{
+    type: Boolean,
+    default: false
    }
 })
 
