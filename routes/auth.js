@@ -41,28 +41,31 @@ router.get(
 
 router.post(
     "/signup",
+
     [
     check("email")
     .isEmail()
     .withMessage("Please enter a valid email"),
 
-    body(
-        "password",
-        "Please enter a password with only numbers and text and at least 5 characters"
-    )
-     .isAlphanumeric()
-     .isLength({min: 5})
-    .trim(),
+    // body(
+    //     "password",
+    //     "Please enter a password with only numbers and text and at least 5 characters"
+    // )
+    //  .isAlphanumeric()
+    //  .isLength({min: 5})
+    // .trim(),
     
-    body
-    ("confirmPassword")
-    .custom((value, { req }) => {
-        if(value !== req.body.password) {
-            throw new Error ("Passwords do not match")
-        }
-        return;
-    })
+    // body
+    // ("confirmPassword")
+    // .custom((value, { req }) => {
+    //     if(value !== req.body.password) {
+    //         throw new Error ("Passwords do not match")
+    //     }
+    //     return;
+    // })
+    
     ],
+    
     authController.postSignUp
 )
 

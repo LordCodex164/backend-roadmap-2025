@@ -65,11 +65,14 @@ app.use((req, res, next) => {
    }
    User.findById(req.session.user._id)
    .then(user => {
+     if(!user){
+        return next()
+     }
      req.user = user
      next()
    })
    .catch(err => {
-    console.log(err)
+    throw new Error(err)      
    })
 })
 
@@ -78,20 +81,38 @@ app.use((req, res, next) => {
     next() 
 })
 
-app.use((err, req, res, next) => {
-    if (err.code === 'EBADCSRFTOKEN') {
-        return res.status(403).send('Invalid CSRF token.');
-    }
-    next(err);
-});
-
-
 app.use("/", shopRoutes)
 app.use("/admin", adminRoutes.routes)
 app.use("/cart", cartRoutes)
 app.use("/order", orderRoutes)
 app.use("/auth", authRoutes)
 // app.use(errorController.get404)
+
+app.use((err, req, res, next) => {
+    if (err.code === 'EBADCSRFTOKEN') {
+        return res.status(403).send('Invalid CSRF token.');
+    }
+
+    console.log(err.name)
+
+    let customErrorObj = {}
+    let templateName;
+
+    if(err.name === "ValidationError") {
+        const errorName = Object.values(err.errors).map((error) => error.message).join(",")
+        customErrorObj.message = errorName;
+        customErrorObj.statusCode = 500
+        templateName= "error/500"        
+    }
+
+    res.render(templateName, {
+        pageTitle: `${customErrorObj.statusCode} Page`,
+        isAuthenticated: false
+    })
+
+    return next()
+});
+
 
 mongoConnect(client => {
     //console.log(client)

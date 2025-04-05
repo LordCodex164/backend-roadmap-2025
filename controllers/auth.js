@@ -13,8 +13,6 @@ exports.login = function (req, res) {
 
 exports.postLogin = function (req, res) {
 
-    console.log(req.body.email)
-
     const {email, password} = req.body
     
     if(!email || !password){
@@ -44,9 +42,7 @@ exports.postLogin = function (req, res) {
             return res.redirect("/auth/login")
         }
 
-        const isMatch = bcrypt.compareSync(password, user.password)
-
-            console.log("isMatch", isMatch)
+        const isMatch = bcrypt.compareSync(password, user.password)  
             if(isMatch){ 
                 req.session.isLoggedIn = true
                 req.session.user = user
@@ -64,10 +60,6 @@ exports.postLogin = function (req, res) {
 }
 
 exports.postlogout = function (req, res) {
-
- console.log("tok",req.session.csrfToken)
-
- console.log("body", req.body)
 
   if(req.body._csrf === req.session.csrfToken){
      req.session.destroy(err => {
@@ -93,8 +85,6 @@ exports.signup = function (req, res) {
 
 exports.postSignUp = (req, res, next) => {
 
-    console.log(req.body)
-
     const {email, password, confirmPassword} = req.body
 
     const errors = validationResult(req)
@@ -119,18 +109,20 @@ exports.postSignUp = (req, res, next) => {
         const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(8))
 
         const user = new User({
-            email: email,
             password: hashedPassword,
             cart: {
                 items: []
             }
-        }) 
+        })
+        console.log("u", user)
         return user.save()
     .then(result => {
+        console.log("r", result)
         res.redirect("/auth/login")
     })
     }).catch(err => {
-        console.log(err)
+        console.log("test")
+        next(err)
     })
 
     if(password !== confirmPassword){
