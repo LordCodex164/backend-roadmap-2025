@@ -5,13 +5,13 @@
     <%- include("../includes/navigation.ejs") %>
 
     <main>
-        <form action="/admin/add-product" method="POST">
+        <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
             <label>Title</label>
             <input type="text" name="title">
             <label>description</label>
             <input type="text" name="description">
             <label>imageUrl</label>
-            <input type="text" name="imageUrl">
+            <input type="file" name="image"> 
             <label>price</label>
             <input type="text" name="price">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">

@@ -14,7 +14,11 @@ exports.addProduct = function(req, res) {
 
 exports.postAddProduct = function(req, res) {
 
-    const {title, description, price, imageUrl} = req.body
+    const {title, description, price} = req.body
+
+    const {imageUrl} = req.file
+
+    console.log("imageUrl")
 
     const newProduct = new Product({title,price,imageUrl,description, userId: req.user})
 

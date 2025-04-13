@@ -23,6 +23,7 @@ const MongoDbStore = require("connect-mongodb-session")(session)
 const csrf = require("csurf")
 const flash = require("connect-flash")
 const createCrsfToken = require('./middleware/crsfToken');
+const multer = require("multer")
 
 // app.engine('hbs', hbs({layoutDir: "views/layouts", extname: "hbs", defaultLayout: "main-layout"}))
 
@@ -35,11 +36,12 @@ app.use(methodOverride('_method'));
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
+app.use(multer({dest: "images"}).single("image"))
+
 const store = new MongoDbStore({
     uri: process.env.MONGO_URL,
     collection: "sessions",
 })
-
 
 //configuring our store where we store our session
 app.use(
@@ -109,14 +111,12 @@ app.use((err, req, res, next) => {
         pageTitle: `${customErrorObj.statusCode} Page`,
         isAuthenticated: false
     })
-
     return next()
 });
 
 
 mongoConnect(client => {
-    //console.log(client)
     app.listen(3000, () => {
         console.log("listening on Port 3000")
     })
-})
+}) 

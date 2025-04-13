@@ -7,6 +7,8 @@ const {validationResult} = require("express-validator")
 exports.login = function (req, res) {
 
     const isLoggedIn = req.session.isLoggedIn
+
+
     res.render("auth/login", {pageTitle: "Login Page", isAuthenticated: isLoggedIn, errorMessage: req.flash("error")})
 
 }
@@ -27,7 +29,7 @@ exports.postLogin = function (req, res) {
 
     if(errors_) {
         req.flash("error", errors_)
-        return res.status(422).redirect("/auth/signup")
+        return res.status(412).redirect("/auth/signup")
     }
 
 
