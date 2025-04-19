@@ -46,6 +46,7 @@ exports.postLogin = function (req, res) {
 
         const isMatch = bcrypt.compareSync(password, user.password)  
             if(isMatch){ 
+                console.log("is", isMatch)
                 req.session.isLoggedIn = true
                 req.session.user = user
                 return req.session.save(err => {
@@ -134,11 +135,14 @@ exports.postSignUp = (req, res, next) => {
 }
 
 exports.getResetEmail = (req, res) => {
+    console.log("it runs")
     const isLoggedIn = req.session.isLoggedIn
     res.render("auth/resetEmail", {pageTitle: "Reset Email", isAuthenticated: isLoggedIn, errorMessage: req.flash("error")})
 }
 
 exports.postResetEmail = async (req, res, next) => {
+
+    console.log("it runs")
 
     const {email} = req.body
 
@@ -148,12 +152,14 @@ exports.postResetEmail = async (req, res, next) => {
 
     const user = await User.findOne({email})
 
+    console.log(1, user)
+
     if(user){
         crypto.randomBytes(32, async (err, buffer) => {
             if(!err){
                 const token = buffer.toString("hex")
                 user.resetToken = token
-                user.resetTokenExpiration = new Date() + 3600000
+                user.resetTokenExpiration = new Date().setDate(new Date().getDate() + 1)
                 const isModified = await user.save()
 
                 if(isModified){
@@ -162,7 +168,7 @@ exports.postResetEmail = async (req, res, next) => {
                     subject: "password reset",
                     text: `You requested for a password reset.
                     `,
-                    html: `<p>here is your token ${token},<a href="http://localhost:3000/resetPassword/${token}">click this link to reset your password</a></p>`
+                    html: `<p>here is your token ${token},<a href="http://localhost:3000/auth/resetPassword/${token}">click this link to reset your password</a></p>`
                    })
                 }
                req.flash("error", "otp sent to the user");
@@ -175,17 +181,23 @@ exports.postResetEmail = async (req, res, next) => {
 
 exports.getResetPassword = async(req, res, next) => {
 
+    console.log(1, "it runs")
+
     const {token} = req.params
 
-    const user = User.findOne({resetToken: token, resetTokenExpiration: {$gt: Date.now()}})
+    const user = await User.findOne({resetToken: token, resetTokenExpiration: {$gt: Date.now()}})
+    
+    console.log(2, user)
 
     const isLoggedIn = req.session.isLoggedIn
+    
+    console.log(3, isLoggedIn)
 
     if(!user){
      return res.redirect("/auth/login")
     }
 
-    res.render("auth/resetPassword", {
+    res.render("auth/resetPasword", {
         pageTitle: "Reset Password", 
         isAuthenticated: isLoggedIn, 
         errorMessage: req.flash("error"),
@@ -197,19 +209,29 @@ exports.getResetPassword = async(req, res, next) => {
 
 exports.postResetPassword = async (req, res, next) => {
 
-    const {newPassword, token} = req.body
+    const {password, email} = req.body
 
-    const user = User.findOne({resetToken: token, resetTokenExpiration: {$gt: Date.now()}})
+    console.log("r", req.body)
+
+    console.log("n", password)
+
+    const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(8))
+
+    const user = await User.findOne({email, resetTokenExpiration: {$gt: Date.now()}})
+
+    console.log(1, user)
 
     if(user){
-        user.password = newPassword,
+        user.password = hashedPassword,
         user.resetToken = undefined,
         user.resetTokenExpiration = undefined
+        user.is_active = true
         const isSaved = user.save()
         if(isSaved){
             req.flash("error", "you have successful reset your password")
-            return res.redirect("auth/login")
+            return res.redirect("/auth/login")
         }
     }
-    throw new Error("Something went wrong")
+    req.flash("error", "you have successful reset your password")
+    return res.redirect("/auth/login")
 }

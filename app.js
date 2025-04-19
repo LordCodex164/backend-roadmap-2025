@@ -25,9 +25,31 @@ const flash = require("connect-flash")
 const createCrsfToken = require('./middleware/crsfToken');
 const multer = require("multer")
 
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "images")
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + "-" + Date.now() + "-" + Math.round(Math.random() * 1E9))
+    }
+})
+
+const fileFilter = (req, file, cb) => {
+    if(
+        file.mimetype === "image/png" ||
+        file.mimetype === "image/jpg" ||
+        file.mimetype === "image/jpeg"
+    ){
+        return cb(null, true)
+    }
+    else {
+    cb(null, false) 
+    }
+}
+
 // app.engine('hbs', hbs({layoutDir: "views/layouts", extname: "hbs", defaultLayout: "main-layout"}))
 
-app.engine("ejs", require("ejs").__express) 
+app.engine("ejs", require("ejs").__express)
 
 app.set('view engine', 'ejs')
 app.set('views', 'views')
@@ -36,7 +58,7 @@ app.use(methodOverride('_method'));
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.use(multer({dest: "images"}).single("image"))
+app.use(multer({storage: fileStorage, fileFilter}).single("image"))
 
 const store = new MongoDbStore({
     uri: process.env.MONGO_URL,
@@ -88,23 +110,23 @@ app.use("/admin", adminRoutes.routes)
 app.use("/cart", cartRoutes)
 app.use("/order", orderRoutes)
 app.use("/auth", authRoutes)
-// app.use(errorController.get404)
+app.use(errorController.get404)
 
 app.use((err, req, res, next) => {
     if (err.code === 'EBADCSRFTOKEN') {
         return res.status(403).send('Invalid CSRF token.');
     }
 
-    console.log(err.name)
+    console.log(err)
 
     let customErrorObj = {}
     let templateName;
 
     if(err.name === "ValidationError") {
-        const errorName = Object.values(err.errors).map((error) => error.message).join(",")
+        const errorName = Object.values(err.errors || {}).map((error) => error.message).join(",")
         customErrorObj.message = errorName;
         customErrorObj.statusCode = 500
-        templateName= "error/500"        
+        templateName= "error/500"
     }
 
     res.render(templateName, {
@@ -116,7 +138,9 @@ app.use((err, req, res, next) => {
 
 
 mongoConnect(client => {
-    app.listen(3000, () => {
-        console.log("listening on Port 3000")
-    })
+    if(client.code !== "ETIMEOUT") {
+        app.listen(3000, () => {
+            console.log("listening on Port 3000")
+        })
+  }
 }) 

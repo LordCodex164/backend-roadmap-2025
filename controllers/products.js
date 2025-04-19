@@ -5,37 +5,34 @@ exports.addProduct = function(req, res) {
 
     const isLoggedIn = req.session.isLoggedIn;
 
-    console.log("tok",req.session.csrfToken)
-
     console.log("body", req.body)
 
-    res.render('admin/add-product', {pageTitle: 'Add Product', isAuthenticated: isLoggedIn});
+    res.render('admin/add-product', {pageTitle: 'Add Product', isAuthenticated: isLoggedIn, errorMessage: req.flash("error")});
 }
 
 exports.postAddProduct = function(req, res) {
 
+    console.log(1, "it runs")
+
+    const isLoggedIn = req.session.isLoggedIn;
+
+    if(!req.file){
+        req.flash("error", "No file attached")
+        return res.status(422).render('admin/add-product', {pageTitle: 'Add Product', isAuthenticated: isLoggedIn, errorMessage: req.flash("error")});
+    }
+
     const {title, description, price} = req.body
 
-    const {imageUrl} = req.file
-
-    console.log("imageUrl")
-
-    const newProduct = new Product({title,price,imageUrl,description, userId: req.user})
-
-    if(req.body._csrf === req.session.csrfToken){
-     newProduct.save()
+    const newProduct = new Product({title, price,imageUrl: image,description, userId: req.user})
+     .save()
      .then(result => {
-        res.redirect("/")
+        res.redirect("/admin/add-product")
      })
     .catch(err => {
         console.log("e", err)
     })
 }
-else {
-    req.flash("error", "Invalid csrf token")
-    return res.redirect("/")
-}
-}
+
 
 exports.getProducts = function(req, res) {
 

@@ -4,6 +4,10 @@
 
     <%- include("../includes/navigation.ejs") %>
 
+    <% if (errorMessage) { %>
+        <p><%= errorMessage %></p>
+    <% } %>
+
     <main>
         <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
             <label>Title</label>
@@ -11,10 +15,14 @@
             <label>description</label>
             <input type="text" name="description">
             <label>imageUrl</label>
-            <input type="file" name="image"> 
+            <input type="file" name="image" id="image"> 
             <label>price</label>
             <input type="text" name="price">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <% if (csrfToken) { %>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <% } else { %>
+                <input type="hidden" value="<%=  %>">
+            <% } %>
             <button type="submit">Add Product</button>
         </form>
     </main>

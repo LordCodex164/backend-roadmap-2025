@@ -25,7 +25,7 @@ router.post("/login",
         )
          .isAlphanumeric()
          .isLength({min: 5})
-        .trim()
+        .trim() 
     ],
 
     authController.postLogin)
@@ -74,6 +74,7 @@ router.get("/resetEmail",
     authController.getResetEmail
 )
 router.post("/resetEmail",  authController.postResetEmail)
-router.get("/resetPassword/:token", createCrsfToken, authController.postResetEmail)
+router.get("/resetPassword/:token", createCrsfToken, authController.getResetPassword)
+router.post("/resetPassword", authController.postResetPassword)
 
 module.exports = router
