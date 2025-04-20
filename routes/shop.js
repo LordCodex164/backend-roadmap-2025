@@ -7,6 +7,6 @@ const router = express.Router()
 
 router.get("/", createCrsfToken, products.getProducts)
 
-router.get("/product/:productId", products.getProduct)
+router.get("/product/:productId", createCrsfToken, products.getProduct)
 
 module.exports = router

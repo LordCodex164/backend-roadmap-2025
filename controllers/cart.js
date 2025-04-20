@@ -2,6 +2,7 @@ const Product = require("../models/product").product;
 const db = require("../utils/db")
 
 exports.addCart = function(req, res) {
+    const isLoggedIn = req.session.isLoggedIn;
     res.render('admin/add-product', {pageTitle: 'Add Product', isAuthenticated: isLoggedIn});
 }
 
@@ -9,9 +10,12 @@ exports.postCart = function(req, res) {
 
   const productId = req.body.productId
 
-  if(req.csrfToken === req.session.csrfToken){
+  if(req.body._csrf === req.session.csrfToken){
+    console.log(1, req.user)
     req.user.addToCart(productId)
     .then(result => {
+      console.log("cb", result)
+      req.session.user.cart = result
       res.redirect("/")
     })
     .catch(err => {
@@ -27,7 +31,9 @@ exports.postCart = function(req, res) {
 
 exports.getCart = function(req, res) {
 
-      const isLoggedIn = req.session.isLogged;
+      const isLoggedIn = req.session.isLoggedIn;
+
+      console.log(1, isLoggedIn)
 
        req.user?.getCart()
        .then(products => {
@@ -40,7 +46,11 @@ exports.getCart = function(req, res) {
 
 exports.getCartProducts = function(req, res) {
 
-  const isLoggedIn = req.session.isLogged;
+  const isLoggedIn = req.session.isLoggedIn;
+
+  const items = req.session.user.cart.items
+
+  console.log("it", items)
 
   req.user?.getAllCart()
   .then(prods => {
@@ -55,9 +65,6 @@ exports.deleteCartProduct = function (req, res) {
 
 
   const id = req.body.productId
-
-  console.log("id", id)
-
 
   req.user.deleteCart(id)
     .then(result => {

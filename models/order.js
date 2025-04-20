@@ -56,6 +56,8 @@ OrderSchema.methods.addOrder = async function (userId, cartItems) {
 
     const updatedUser = await User.findByIdAndUpdate(userId, {cart: []})
 
+    console.log("up", updatedUser)
+
     if(updatedUser) {
 
     return this.save()

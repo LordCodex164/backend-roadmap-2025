@@ -1,4 +1,6 @@
 const Order = require("../models/order")
+const path = require("path")
+const fs = require("fs")
 
 exports.checkoutOrder = function (req, res, next) {
     /*get the products that we are sending from the cart */
@@ -42,7 +44,7 @@ exports.checkoutOrder = function (req, res, next) {
     //     return fetchedOrders
     // })
     // .then(orders => {
-    //     let order;
+    //     let order; 
     //     order = orders[0]
     //     let dQuantity = 2
     //     fetchedProducts
@@ -68,14 +70,15 @@ exports.getOrders = function (req, res, next) {
 
    let userId = req.user._id;
 
-   const isLoggedIn = req.session.isLogged;
+   const isLoggedIn = req.session.isLoggedIn;
 
      Order
     .find({userId})
     .populate("items.productId")
-    .select("-_id")
+    .select("")
     // .execPopulate()
     .then(orders => {
+        console.log("o", orders)
        return res.render("order/order-list", {orders, pageTitle: 'Orders', hasOrders: orders?.length > 0, isAuthenticated: isLoggedIn})
     })
     .catch(err => {
@@ -116,4 +119,10 @@ exports.getOrdersProducts = function (req) {
     .catch(err => {
         console.log(err)
     })
+}
+
+exports.downloadInvoice = function (req, res) {
+    const orderId = req.params.orderId
+    console.log("o", orderId)
+    res.status(200).json({msg: "it is working"})
 }

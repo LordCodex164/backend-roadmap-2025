@@ -265,15 +265,15 @@ const UserSchema = new mongoose.Schema({
 
     //find index of the item in the cart
 
-    console.log(this.cart.items, "items")
+    console.log(this.cart.items, "items") 
 
+    let updatedUserCarts = [...this?.cart?.items]
+    
     const cartProductIndex = this.cart?.items?.findIndex(cb => {
         return cb.productId == prodId
     })
-
+    
     console.log("index", cartProductIndex)
-
-    let updatedUserCarts = [...this?.cart?.items]
 
     let newQuantity = 1
 
@@ -293,12 +293,15 @@ const UserSchema = new mongoose.Schema({
        items: updatedUserCarts,
        status: "active"
      }
+
+     console.log("u", updatedCart)
  
      if(updatedCart){
        //update user cart
       this.cart = updatedCart
 
-      return this.save()
+      this.save()
+      return Promise.resolve(updatedCart)
      }
    }
 

@@ -17,13 +17,13 @@ exports.postAddProduct = function(req, res) {
     const isLoggedIn = req.session.isLoggedIn;
 
     if(!req.file){
-        req.flash("error", "No file attached")
-        return res.status(422).render('admin/add-product', {pageTitle: 'Add Product', isAuthenticated: isLoggedIn, errorMessage: req.flash("error")});
+        req.flash("error", "Please attach a valid image") 
+        return res.redirect('/admin/add-product');
     }
 
     const {title, description, price} = req.body
 
-    const newProduct = new Product({title, price,imageUrl: image,description, userId: req.user})
+    const newProduct = new Product({title, price,imageUrl: req.file.path, description, userId: req.user})
      .save()
      .then(result => {
         res.redirect("/admin/add-product")

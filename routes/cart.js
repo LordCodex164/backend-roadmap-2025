@@ -1,9 +1,10 @@
 const express = require('express')
 const cartController = require("../controllers/cart")
+const createCrsfToken = require('../middleware/crsfToken');
 
 const router = express.Router()
 
-router.get("/", cartController.getCartProducts)
+router.get("/", createCrsfToken, cartController.getCartProducts)
 
 router.get('/cart', cartController.getCart)
 

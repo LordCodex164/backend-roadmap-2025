@@ -24,12 +24,14 @@ const csrf = require("csurf")
 const flash = require("connect-flash")
 const createCrsfToken = require('./middleware/crsfToken');
 const multer = require("multer")
+const path = require("path")
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "images")
     },
     filename: (req, file, cb) => {
+        console.log(1, file.fieldname)
         cb(null, file.fieldname + "-" + Date.now() + "-" + Math.round(Math.random() * 1E9))
     }
 })
@@ -59,6 +61,8 @@ app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(multer({storage: fileStorage, fileFilter}).single("image"))
+
+app.use(express.static(path.join(__dirname, "images")))
 
 const store = new MongoDbStore({
     uri: process.env.MONGO_URL,
