@@ -11,6 +11,6 @@ router.get('/edit-product/:productId', productController.getEditProduct);
 
 router.post('/edit-product', productController.updateProduct);
 
-router.post("/delete-product", productController.deleteProduct)
+router.post("/delete-product", createCrsfToken, productController.deleteProduct)
 
 exports.routes = router;

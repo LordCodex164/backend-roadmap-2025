@@ -102,7 +102,7 @@
 //       return Promise.all(mappedPromise)
 //       .then(resolvedProducts => {
 //         fetchedProducts = resolvedProducts.filter(Boolean)
-//         const updatedProducts = {
+//         const updatedProducts  = {
 //            items: updatedCart,
 //            status: "pending"
 //         }

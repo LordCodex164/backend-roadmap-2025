@@ -121,7 +121,7 @@ app.use((err, req, res, next) => {
         return res.status(403).send('Invalid CSRF token.');
     }
 
-    console.log(err)
+    console.log(err, "error")
 
     let customErrorObj = {}
     let templateName;

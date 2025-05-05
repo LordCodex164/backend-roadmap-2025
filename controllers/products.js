@@ -1,5 +1,5 @@
 const Product = require("../models/product");
-
+const {deleteFile} = require("../utils/file")
 
 exports.addProduct = function(req, res) {
 
@@ -36,15 +36,37 @@ exports.postAddProduct = function(req, res) {
 
 exports.getProducts = function(req, res) {
 
+    const page = req.query.page
+    const itemsPerPage = 4
+    let totalProducts
+
     const isLoggedIn = req.session.isLoggedIn;
 
-       Product.find()
+    Product.find().countDocuments().then(numProducts => {
+        console.log('n', numProducts)
+        totalProducts = numProducts
+        return Product
+       .find()
+       .skip((page - 1) * itemsPerPage)
+       .limit(itemsPerPage)
     //    .select("price imageUrl -_id")
     //    .populate("userId", "name email -_id", )
        .then(products => {
-          res.render('shop/product-list', { products, pageTitle: 'Shop', hasProducts: products.length > 0, isAuthenticated: isLoggedIn, errorMessage: req.flash("error")})
+          res.render('shop/product-list', { 
+            products, 
+            pageTitle: 'Shop', 
+            hasProducts: products.length > 0, 
+            isAuthenticated: isLoggedIn, 
+            errorMessage: req.flash("error"),
+            totalItems: totalProducts,
+            hasNextPage: itemsPerPage * page < totalProducts,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page !==1 ? page - 1 : null, 
+            lastPage: Math.ceil( totalProducts/numProducts )
+        })
        })
-       .catch(err => {
+    }).catch(err => {
          console.log(err)
        })
 }
@@ -106,6 +128,7 @@ exports.deleteProduct = function(req, res) {
     const prodId = req.body.productId
     Product.findByIdAndDelete(prodId)
      .then(result => {
+        deleteFile(result.imageUrl)
         console.log("result deleted")
         res.redirect("/")
      })

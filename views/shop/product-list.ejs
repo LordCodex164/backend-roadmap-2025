@@ -19,7 +19,6 @@
             </li>
 
               <a href="/product/<%= prod._id %>">View Product </a>
-
               
                <!-- <form action="/admin/delete-product" method="POST">
                 <input type="hidden" name="productId" value="<%= prod.id %>">
@@ -27,6 +26,13 @@
               </form> -->
           <% } %>
           </ol>  
+
+          <section class="pagination">
+            <% if(currentPage !==1) {%>
+              <a href="/?page=1">1</a>
+            <%}>
+          </section>
+          
 
         <%} else { %>
             <h2>No Products found</h2>

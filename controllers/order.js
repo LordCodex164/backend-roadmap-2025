@@ -1,6 +1,7 @@
 const Order = require("../models/order")
 const path = require("path")
 const fs = require("fs")
+const pdfDocument = require("pdfkit")
 
 exports.checkoutOrder = function (req, res, next) {
     /*get the products that we are sending from the cart */
@@ -122,7 +123,32 @@ exports.getOrdersProducts = function (req) {
 }
 
 exports.downloadInvoice = function (req, res) {
-    const orderId = req.params.orderId
-    console.log("o", orderId)
-    res.status(200).json({msg: "it is working"})
+    try{
+    const orderId = req.params.order_id
+    const invoicename = "invoice-" + orderId + ".pdf"
+    const invoicePath = path.join("data", "invoice", invoicename)
+    Order.findById(orderId)
+    .populate({
+        path: "items",
+        populate:{
+            path: "productId"
+        }
+    })
+    .then(order => {
+        order.items.forEach((item) => {
+            console.log(item)
+            res.setHeader("Content-Type", "application/pdf")
+            res.setHeader("Content-Disposition", "inline; filename=" + invoicename)
+            const pdfDoc = new pdfDocument()
+            pdfDoc.pipe(fs.createWriteStream(invoicePath))
+            pdfDoc.pipe(res) 
+            pdfDoc.text("Here is your invoice " + item.productId.title + " is the name of your product and here is the price " + item.productId.price)
+            pdfDoc.end()
+        })
+    })
+    }
+    catch(err) {
+        console.log(err)
+        res.status(500).send("Error downloading invoice")
+    }
 }
