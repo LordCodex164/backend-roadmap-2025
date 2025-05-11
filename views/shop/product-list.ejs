@@ -28,9 +28,11 @@
           </ol>  
 
           <section class="pagination">
-            <% if(currentPage !==1) {%>
-              <a href="/?page=1">1</a>
-            <%}>
+            <% if(totalPage) { %>
+              <% for(let i=1; i <= totalPage; i++) { %>
+                <a href="/?page=<%= i %>"><%= i %></a>
+              <% } %>
+            <% } %>
           </section>
           
 

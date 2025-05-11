@@ -6,7 +6,7 @@
 
     <%- include("../includes/navigation.ejs") %>
 
-    <main>
+    <main id="product-item">
         <h1><%= product.title %></h1>
         <p><%= product.description %></p>
         <p><%= product.price %></p>
@@ -22,10 +22,10 @@
             edit
             </a>
             <!-- Delete -->
-            <form action="/admin/delete-product" method="POST">
+            <form>
                 <input type="hidden" name="productId" value="<%= product._id %>">
                 <input type = "hidden" name = "_csrf" value = "<%= csrfToken %>">
-                <button type="submit">Delete Product</button>
+                <button type="button" onclick="deleteProduct(this)">Delete Product</button>
             </form>
 
            

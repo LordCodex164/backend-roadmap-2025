@@ -8,7 +8,7 @@
 
 <h1>Edit Product</h1>
 
-<form action="/admin/edit-product" method="POST" enctype="multipart/form-data">
+<form enctype="multipart/form-data">
     <input type="hidden" name="productId" value="<%= productId %>">
     <div class="form-control">
         <label for="title">Title</label>
@@ -21,13 +21,14 @@
     <div class="form-control">
         <label for="imageUrl">Image URL</label>
         <input type="text" id="imageUrl" name="imageUrl" value="<%= product.imageUrl %>">
+        <input type="file" name="image" id="image" value="<%= product.imageUrl %>"> 
     </div>
     <div class="form-control">
         <label for="description">Description</label>
         <textarea id="description" name="description"><%= product.description %></textarea>
     </div>
     <input type="hidden" name="_csrf" value="<%= csrfToken %>"> 
-    <button type="submit">Edit Product</button>
+    <button type="button">Edit Product</button>
 
 </form>
 

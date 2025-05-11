@@ -14,6 +14,7 @@ exports.postAddProduct = function(req, res) {
 
     console.log(1, "it runs")
 
+
     const isLoggedIn = req.session.isLoggedIn;
 
     if(!req.file){
@@ -37,14 +38,15 @@ exports.postAddProduct = function(req, res) {
 exports.getProducts = function(req, res) {
 
     const page = req.query.page
-    const itemsPerPage = 4
+    console.log(1, page)
+    const itemsPerPage = 1
     let totalProducts
 
     const isLoggedIn = req.session.isLoggedIn;
 
     Product.find().countDocuments().then(numProducts => {
-        console.log('n', numProducts)
         totalProducts = numProducts
+        console.log(Math.ceil( totalProducts/itemsPerPage ))
         return Product
        .find()
        .skip((page - 1) * itemsPerPage)
@@ -59,11 +61,13 @@ exports.getProducts = function(req, res) {
             isAuthenticated: isLoggedIn, 
             errorMessage: req.flash("error"),
             totalItems: totalProducts,
+            currentPage: page,
             hasNextPage: itemsPerPage * page < totalProducts,
             hasPreviousPage: page > 1,
+            hasPrevious: page !==0 && page - 1,
             nextPage: page + 1,
-            previousPage: page !==1 ? page - 1 : null, 
-            lastPage: Math.ceil( totalProducts/numProducts )
+            previousPage: page - 1,
+            totalPage: Math.ceil( totalProducts/itemsPerPage )
         })
        })
     }).catch(err => {
@@ -94,7 +98,7 @@ exports.getEditProduct = function(req, res) {
 
     const isEdit = req.query.isEdit
 
-    const isLoggedIn = req.session.isLogged;
+    const isLoggedIn = req.session.isLoggedIn;
 
     if(!isEdit) {
         return res.redirect("/")
@@ -103,6 +107,7 @@ exports.getEditProduct = function(req, res) {
     const id = req.params.productId
     Product.findById(id)
     .then(product => {
+        console.log(1, product)
         res.render('admin/edit-product', { product, pageTitle: 'Edit Product', productId: product._id.toString(), isAuthenticated: isLoggedIn })
     })
     .catch(err => {
@@ -112,12 +117,13 @@ exports.getEditProduct = function(req, res) {
 
 exports.updateProduct = function(req, res) {
 
-    const {productId, title, description, price, imageUrl} = req.body
+    const {productId} = req.params
 
-    Product.findByIdAndUpdate(productId, {title, description, price, imageUrl})
+    const {title, description, price, image} = req.body
+
+    Product.findByIdAndUpdate(productId, {title, description, price, imageUrl: image})
     .then(result => {
-        console.log("updated product")
-        res.redirect("/")
+        res.status(200).json({msg: "updated product", product})
     }) 
     .catch(err => {
         console.log(err)
@@ -125,14 +131,13 @@ exports.updateProduct = function(req, res) {
 }
 
 exports.deleteProduct = function(req, res) {
-    const prodId = req.body.productId
+    const prodId = req.params.productId
     Product.findByIdAndDelete(prodId)
      .then(result => {
         deleteFile(result.imageUrl)
-        console.log("result deleted")
-        res.redirect("/")
+        res.status(200).json({msg: "product deleted"})
      })
      .catch(err => {
-        console.log("err", err)
+        res.status(500).json({msg: "product deleting failed"})
      })
 }

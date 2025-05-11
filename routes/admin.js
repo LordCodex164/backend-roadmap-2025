@@ -7,10 +7,10 @@ router.get('/add-product', createCrsfToken, productController.addProduct);
 
 router.post('/add-product', productController.postAddProduct);
 
-router.get('/edit-product/:productId', productController.getEditProduct);
+router.get('/edit-product/:productId', createCrsfToken, productController.getEditProduct);
 
-router.post('/edit-product', productController.updateProduct);
+router.put('/edit-product/:productId', productController.updateProduct);
 
-router.post("/delete-product", createCrsfToken, productController.deleteProduct)
+router.delete("/product/:productId", createCrsfToken, productController.deleteProduct)
 
 exports.routes = router;
