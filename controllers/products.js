@@ -107,7 +107,6 @@ exports.getEditProduct = function(req, res) {
     const id = req.params.productId
     Product.findById(id)
     .then(product => {
-        console.log(1, product)
         res.render('admin/edit-product', { product, pageTitle: 'Edit Product', productId: product._id.toString(), isAuthenticated: isLoggedIn })
     })
     .catch(err => {
@@ -119,11 +118,11 @@ exports.updateProduct = function(req, res) {
 
     const {productId} = req.params
 
-    const {title, description, price, image} = req.body
+    const {title, description, price, image} = req.body    
 
     Product.findByIdAndUpdate(productId, {title, description, price, imageUrl: image})
     .then(result => {
-        res.status(200).json({msg: "updated product", product})
+        res.status(200).json({msg: "updated product", product: result})
     }) 
     .catch(err => {
         console.log(err)

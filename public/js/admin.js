@@ -17,34 +17,29 @@ const deleteProduct = (btn) => {
     })
 }
 
-const updateProduct = (btn) => {
+const updateProduct = async (btn) => {
     const prodId = btn.parentNode.querySelector("[name=productId]").value;
     const crsf = btn.parentNode.querySelector("[name=_csrf").value;
-    const title = document.getElementById("title")
-    const price = document.getElementById("price")
-    const imageUrl = document.getElementById("imageUrl")
-    const description = document.getElementById("description")
-    fetch(`/admin/edit-product/${prodId}`, {
+    const title = document.getElementById("title").value
+    const price = document.getElementById("price").value
+    const imageUrl = document.getElementById("imageUrl").value
+    const description = document.getElementById("description").value
+    const response = await fetch(`/admin/edit-product/${prodId}`, {
         method: "PUT",
         headers: {
-            "csrf-token": crsf
+            "csrf-token": crsf,
+            "Content-Type": "application/json"
         },
-        body:{
-            title,
-            price,
-            imageUrl,
-            description
-        }
+        body: JSON.stringify({
+            title: title,
+            price: price,
+            imageUrl: imageUrl,
+            description: description
+        })
     })
-    .then(result => {
-        return result.json()
-    })
-    .then(data => {
-        
-    })
-    .catch(err => {
-        console.log(1.1, err)
-    })
+    
+    const data = await response.json()
+    
 }
 
 const clickBtn = () => {

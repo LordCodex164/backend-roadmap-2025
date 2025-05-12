@@ -136,7 +136,6 @@ exports.downloadInvoice = function (req, res) {
     })
     .then(order => {
         order.items.forEach((item) => {
-            console.log(item)
             res.setHeader("Content-Type", "application/pdf")
             res.setHeader("Content-Disposition", "inline; filename=" + invoicename)
             const pdfDoc = new pdfDocument()
@@ -151,4 +150,8 @@ exports.downloadInvoice = function (req, res) {
         console.log(err)
         res.status(500).send("Error downloading invoice")
     }
+}
+
+exports.getCheckout = function (req, res) {
+     
 }

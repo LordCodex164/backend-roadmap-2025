@@ -59,6 +59,7 @@ app.set('views', 'views')
 app.use(methodOverride('_method'));
 
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.json())
 
 app.use(multer({storage: fileStorage, fileFilter}).single("image"))
 
@@ -118,9 +119,6 @@ app.use("/auth", authRoutes)
 app.use(errorController.get404)
 
 app.use((err, req, res, next) => {
-    //console.log("req", req)
-    console.log("res", req.csrfToken())
-    console.log("err", err)
     if (err.code === 'EBADCSRFTOKEN') {
         return res.status(403).send('Invalid CSRF token.');
     }
