@@ -30,19 +30,11 @@
     </ul>
         <% } %>
 
-        <form action="/order/checkout" method="POST">
-            <% if (csrfToken) { %>
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <% } else { %>
-                <input type="hidden" value="<%=  %>">
-            <% } %>
-            <button type="submit">Checkout</button>
-        </form>
+            <a href="/order/checkout">Order Now</a>
 
         <% } else { %>
 
         <p>No products in your cart</p>
-
         <% } %>
     
 

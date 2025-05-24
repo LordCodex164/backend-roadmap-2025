@@ -2,6 +2,8 @@ const Order = require("../models/order")
 const path = require("path")
 const fs = require("fs")
 const pdfDocument = require("pdfkit")
+const order = require("../models/order")
+const Stripe = require("stripe")(`${process.env.STRIPE_SECRET_KEY}`)
 
 exports.checkoutOrder = function (req, res, next) {
     /*get the products that we are sending from the cart */
@@ -18,7 +20,7 @@ exports.checkoutOrder = function (req, res, next) {
 
     newOrder.addOrder(userId, items)
     .then(order => {
-       res.redirect("/")
+        return res.redirect('/admin/add-product');
     })
     .catch(err => {
         console.log(err)
@@ -66,6 +68,23 @@ exports.checkoutOrder = function (req, res, next) {
     // })
 }
 
+exports.checkoutSuccess = async function (req, res, next) {
+  
+    const userId = req.session.user._id
+
+     const items = req.session.user.cart.items
+
+    const newOrder = new Order()
+
+    newOrder.addOrder(userId, items)
+    .then(order => {
+       res.redirect("/")
+    })
+    .catch(err => {
+        console.log(err)
+    })
+}
+
 //we can do this way with lazy loading
 exports.getOrders = function (req, res, next) {
 
@@ -79,7 +98,7 @@ exports.getOrders = function (req, res, next) {
     .select("")
     // .execPopulate()
     .then(orders => {
-        console.log("o", orders)
+        console.log("o", orders[0]?.items)
        return res.render("order/order-list", {orders, pageTitle: 'Orders', hasOrders: orders?.length > 0, isAuthenticated: isLoggedIn})
     })
     .catch(err => {
@@ -152,6 +171,59 @@ exports.downloadInvoice = function (req, res) {
     }
 }
 
-exports.getCheckout = function (req, res) {
-     
+
+exports.getCheckout = async function checkout (req, res) {
+    try {
+    let totalAllOrders = 0
+    let sub_total = 0
+    let userId = req.user._id;
+
+    const isLoggedIn = req.session.isLoggedIn
+
+    let session = null;
+
+    const items = req.session.user.cart.items
+
+    req.user?.getAllCart()
+    .then(prods => {
+        prods.forEach(async (item) => {
+        const product = await Stripe.products.create({
+        name: item.title
+        })
+        const price = await Stripe.prices.create({
+            product: `${product.id}`,
+            unit_amount: item.price,
+            currency: "usd"
+        })
+        session = await Stripe.checkout.sessions.create({
+            mode: 'payment',
+            line_items: [
+              {
+                price: `${price.id}`,
+                quantity: item.quantity,
+              },
+            ],
+            success_url: req.protocol + "://" + req.get("host") + `/order/checkout/success`,
+            cancel_url: req.protocol + "://" + req.get("host")  + '/order/checkout/cancel',
+        });  
+        sub_total += item.price * item.quantity
+        return res.render("shop/checkout", {
+            products: prods, 
+            pageTitle: 'Checkout Order', 
+            hasProducts: prods?.length > 0,
+            isAuthenticated: isLoggedIn,
+            errorMessage: req.flash("error"),
+            sessionId: session.id,
+            sub_total,
+            API_KEY: process.env.STRIPE_API_KEY
+        })
+     })   
+     })
+    .catch(err => {
+        console.log(err)
+    })
+}
+catch(err){
+    console.log(err)
+}
 }

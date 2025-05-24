@@ -1,0 +1,51 @@
+ <!-- product detail template -->
+
+<%- include("../includes/head.ejs") %>
+
+<body>
+
+    <%- include("../includes/navigation.ejs") %>
+    <main>
+        <h1>Checkout Page</h1>
+
+        <% if (errorMessage) { %>
+            <p><%= errorMessage %></p>
+          <% } %>
+            <% if (hasProducts) { %>
+              <ol>
+              <% for(let product of products) { %>
+                <li>
+                   <h2> <%= product.title %> </h2> 
+                   <p> Price: <%= product.price %> </p>
+                   <p>imageUrl: <%= product.imageUrl %> </p>
+                   <p>quantity: <%= product.quantity %></p>
+                </li>
+                  
+              <% } %>
+              </ol> 
+
+            <% } else { %>
+
+                <p>No Products on the checkout</p>
+        
+             <% } %>
+
+             <span>Sub Total: <%= sub_total %></span>
+
+             <button id="order-btn" class="btn"> Make Payment </button>
+             <script src="https://js.stripe.com/v3"></script>
+             <script>
+                var stripe = Stripe(`<%= API_KEY %>`)
+                var orderBtn = document.getElementById("order-btn");
+                orderBtn.addEventListener("click", () => {
+                   stripe.redirectToCheckout({
+                      sessionId: "<%= sessionId %>"
+                   })
+                })
+             </script>
+
+    </main>
+
+</body>
+
+</html>
